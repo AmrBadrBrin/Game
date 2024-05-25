@@ -2,12 +2,14 @@ const express = require("express");
 const fs = require("fs");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(bodyParser.json()); // Middleware для обработки JSON-тел запросов
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Функция для чтения данных из файла
 function readData(callback) {
@@ -26,6 +28,11 @@ function readData(callback) {
 function writeData(data, callback) {
   fs.writeFile("data.json", JSON.stringify(data, null, 2), callback);
 }
+
+// Define a route to serve the index.html file
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 // Маршрут для получения значения счетчика и данных о пользователях
 app.get("/clicks", (req, res) => {
