@@ -35,7 +35,7 @@
       const usernameInput = document.getElementById("username");
 
       // Получаем текущее значение счетчика и результаты при загрузке страницы
-      fetch("https://clicker666666-849c2326d241.herokuapp.com")
+      fetch("https://clicker666666-849c2326d241.herokuapp.com/clicks")
         .then((response) => response.json())
         .then((data) => {
           clickCount.textContent = "Количество нажатий: " + data.clicks;
@@ -46,7 +46,7 @@
       // Обработчик нажатия на кнопку
       clickButton.addEventListener("click", () => {
         const user = usernameInput.value || "аноним";
-        fetch("https://clicker666666-849c2326d241.herokuapp.com", {
+        fetch("https://clicker666666-849c2326d241.herokuapp.com/clicks", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
