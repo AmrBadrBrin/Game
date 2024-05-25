@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Telegram Mini App</title>
+  </head>
+  <body>
+    <h1>Мини-приложение для Telegram</h1>
+    <p>Введите ваше имя:</p>
+    <input type="text" id="username" placeholder="Ваше имя" />
+    <p>Нажмите на кнопку, чтобы увидеть сколько раз вы ее нажали:</p>
+    <button id="clickButton">Нажми меня</button>
+    <p id="clickCount">Количество нажатий: 0</p>
+
+    <h2>Таблица результатов</h2>
+    <table id="resultsTable">
+      <thead>
+        <tr>
+          <th>Пользователь</th>
+          <th>Количество нажатий</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Результаты будут отображены здесь -->
+      </tbody>
+    </table>
+
+    <script>
+      const clickButton = document.getElementById("clickButton");
+      const clickCount = document.getElementById("clickCount");
+      const resultsTable = document
+        .getElementById("resultsTable")
+        .getElementsByTagName("tbody")[0];
+      const usernameInput = document.getElementById("username");
+
+      // Получаем текущее значение счетчика и результаты при загрузке страницы
+      fetch("https://clicker666666-849c2326d241.herokuapp.com")
+        .then((response) => response.json())
+        .then((data) => {
+          clickCount.textContent = "Количество нажатий: " + data.clicks;
+          updateResultsTable(data.results);
+        })
+        .catch((error) => console.error("Ошибка:", error));
+
+      // Обработчик нажатия на кнопку
+      clickButton.addEventListener("click", () => {
+        const user = usernameInput.value || "аноним";
+        fetch("https://clicker666666-849c2326d241.herokuapp.com", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            clickCount.textContent = "Количество нажатий: " + data.clicks;
+            updateResultsTable(data.results);
+          })
+          .catch((error) => console.error("Ошибка:", error));
+      });
+
+      // Функция для обновления таблицы результатов
+      function updateResultsTable(results) {
+        resultsTable.innerHTML = ""; // Очищаем таблицу
+        results
+          .sort((a, b) => b.clicks - a.clicks) // Сортируем по убыванию количества нажатий
+          .forEach((result) => {
+            const row = document.createElement("tr");
+            const userCell = document.createElement("td");
+            userCell.textContent = result.user;
+            const countCell = document.createElement("td");
+            countCell.textContent = result.clicks;
+            row.appendChild(userCell);
+            row.appendChild(countCell);
+            resultsTable.appendChild(row);
+          });
+      }
+    </script>
+  </body>
+</html>
